@@ -15,6 +15,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 class SummaryRecyclerViewAdapter(private val callbackItemClicked: CallbackItemClicked) : RecyclerView.Adapter<SummaryRecyclerViewAdapter.SummaryRecyclerViewHolder>(){
 
     private var dataList = ArrayList<LaunchInfo>(0)
+    private var prevSelectedViewPosition: Int? = null;
 
     constructor(launchList: ArrayList<LaunchInfo>, callbackItemClicked: CallbackItemClicked) : this(callbackItemClicked) {
         dataList = launchList
@@ -27,7 +28,7 @@ class SummaryRecyclerViewAdapter(private val callbackItemClicked: CallbackItemCl
 
     override fun onBindViewHolder(holder: SummaryRecyclerViewHolder, position: Int) {
         val info = dataList[position]
-        holder.bind(info)
+        holder.bind(info, position)
     }
 
     override fun getItemCount(): Int {
@@ -55,8 +56,9 @@ class SummaryRecyclerViewAdapter(private val callbackItemClicked: CallbackItemCl
     }
 
     inner class SummaryRecyclerViewHolder(private val binding: SummaryDetailsBinding) : RecyclerView.ViewHolder(binding.root){
-        fun bind(info: LaunchInfo){
+        fun bind(info: LaunchInfo, position: Int){
             binding.apply {
+                selectableBackground.isSelected = position == prevSelectedViewPosition
                 Glide.with(launchImage)
                     .load(info.links?.missionPatchSmall)
                     .centerCrop()
@@ -69,12 +71,16 @@ class SummaryRecyclerViewAdapter(private val callbackItemClicked: CallbackItemCl
                 rocketName.text = filterNull(info.rocket?.name)
                 launchSite.text = filterNull(info.launchSite?.name)
                 date.text = filterNull(info.launchDate?.toDate())
-                root.setOnClickListener { callbackItemClicked.onViewHolderClicked(info) }
+                root.setOnClickListener {
+                    selectableBackground.isSelected = true
+                    callbackItemClicked.onViewHolderClicked(info, prevSelectedViewPosition)
+                    prevSelectedViewPosition = position
+                }
             }
         }
     }
 }
 
 interface CallbackItemClicked {
-    fun onViewHolderClicked(launchInfo: LaunchInfo)
+    fun onViewHolderClicked(launchInfo: LaunchInfo, position: Int?)
 }

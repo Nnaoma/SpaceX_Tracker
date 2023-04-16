@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity(), CallbackItemClicked {
                 || super.onSupportNavigateUp()
     }
 
-    override fun onViewHolderClicked(launchInfo: LaunchInfo) {
+    override fun onViewHolderClicked(launchInfo: LaunchInfo, position: Int?) {
         binding.fragmentContainer.detailsFragView?.apply {
             emptyDetail.visibility = View.GONE
             supportFragmentManager.beginTransaction().replace(R.id.detail_view_fragment, DetailsFragment.newInstance(launchInfo)).commitNow()

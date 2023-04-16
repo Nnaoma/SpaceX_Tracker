@@ -77,11 +77,13 @@ class SummaryListFragment : Fragment(), CallbackItemClicked {
         summaryListFragmentBinding = null
     }
 
-    override fun onViewHolderClicked(launchInfo: LaunchInfo) {
+    override fun onViewHolderClicked(launchInfo: LaunchInfo, position: Int?) {
         if(resources.getBoolean(R.bool.isTablet)){
+            if(position != null)
+                recyclerViewAdapter.notifyItemChanged(position)
             val activity = requireActivity()
             if (activity is MainActivity)
-                activity.onViewHolderClicked(launchInfo)
+                activity.onViewHolderClicked(launchInfo, position)
         }else{
             findNavController().navigate(R.id.action_SummaryFragment_to_DetailFragment, Bundle().apply {
                 putParcelable(LAUNCH_INFO_ARGUMENT_KEY, launchInfo)
